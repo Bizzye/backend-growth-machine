@@ -6,7 +6,7 @@ export async function createUser(req: Request, res: Response) {
     const userExists = await User.findOne({ email });
 
     if(userExists) {
-        return res.status(400).json({ error: 'User already exists' });
+        return res.status(409).json({ message: 'User already exists' });
     }
 
     try {
@@ -18,7 +18,7 @@ export async function createUser(req: Request, res: Response) {
             birthDate
         });
 
-        return res.status(201).json(user);
+        return res.status(201).json({ email, firstName, lastName, birthDate, id: user._id});
     } catch(error) {
         return res.status(400).json({ message: 'Error creating user', error });
     }
@@ -47,6 +47,10 @@ export async function listUsers(req: Request, res: Response) {
 }
 
 export async function updateUser(req: Request, res: Response) {
+    if(!req.params.id) {
+        return res.status(405).json({ message: 'invalid id' });
+    }
+
     const user = await User.findById(req.params.id);
 
     if(!user) {
@@ -59,7 +63,16 @@ export async function updateUser(req: Request, res: Response) {
 
     try {
         const updateUser = await user.save();
-        return res.status(201).json(updateUser);
+
+        const obj = {
+            id: updateUser._id,
+            email: updateUser.email,
+            firstName: updateUser.firstName,
+            lastName: updateUser.lastName,
+            createdAt: updateUser.createdAt,
+            birthDate: updateUser.birthDate
+        }
+        return res.status(201).json(obj);
     } catch(error) {
         return res.status(400).json({ message: 'Error updating user', error });
     }

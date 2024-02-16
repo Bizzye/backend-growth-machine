@@ -3,6 +3,6 @@ export interface IUser {
     email: string;
     lastName: boolean;
     firstName: boolean;
-    createdAt: Date;
-    birthDate: Date;
+    createdAt: string;
+    birthDate: string;
 }

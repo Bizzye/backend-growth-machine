@@ -7,11 +7,11 @@ export async function login(req: Request, res: Response) {
     const user = await User.findOne({ email });
 
     if(!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
+        return res.status(405).json({ message: 'Email and password are required' });
     }
 
     if(!user) {
-        return res.status(400).json({ error: 'User not found' });
+        return res.status(404).json({ message: 'User not found' });
     }
 
     if(await user.comparePassword(password)) {
@@ -24,5 +24,5 @@ export async function login(req: Request, res: Response) {
         });
     }
 
-    return res.status(400).json('Invalid password');
+    return res.status(400).json({ message: 'Invalid password' });
 }

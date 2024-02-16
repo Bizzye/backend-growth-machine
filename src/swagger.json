@@ -1,0 +1,290 @@
+{
+    "openapi":  "3.0.0",
+    "info": {
+        "title": "API de Login",
+        "description": "API REST de Login, utilizando JWT, MongoDB e Express.js",
+        "contact": {
+            "email": "bizarro1306@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3333/api",
+            "description": "Servidor Local"
+        }
+    ],
+    "paths": {
+        "/login": {
+            "post": {
+                "summary": "Realiza o login do usuário",
+                "description": "Realiza o login do usuário",
+                "tags": ["auth"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                               "$ref": "#/components/schemas/login"
+                            },
+                            "examples": {
+                                "login": {
+                                    "value": {
+                                        "email": "joao@gmail.com",
+                                        "password": "Senh4Exempl0123!"
+                                     }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Invalid password"
+                    },
+                    "405": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "item": {
+                                        "$ref": "#/components/schemas/user"
+                                    }
+                                }
+                            }
+                        
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "summary": "Realiza a consulta de todos os usuários",
+                "description": "Realiza a consulta de todos os usuários",
+                "tags": ["users"],
+                "responses": {
+                    "400": {
+                        "description": "Error listing users"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/user"
+                                    }
+                                }
+                            }
+                        
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Realiza o cadastro do usuário",
+                "description": "Realiza o cadastro do usuário",
+                "tags": ["auth"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                               "$ref": "#/components/schemas/createdUser"
+                            },
+                            "examples": {
+                                "users": {
+                                    "value": {
+                                        "email": "joao@gmail.com",
+                                        "password": "Senh4Exempl0123!",
+                                        "firstName": "João",
+                                        "lastName": "Silva",
+                                        "birthDate": "1998-06-13T00:00:00.000Z"
+                                     }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "409": {
+                        "description": "User already exists"
+                    },
+                    "400": {
+                        "description": "Error creating user"
+                    },
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "item": {
+                                        "$ref": "#/components/schemas/createdUser"
+                                    }
+                                }
+                            }
+                        
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "put": {
+                "summary": "Edita os dados de um usuário",
+                "description": "Edita os dados de um usuário",
+                "tags": ["users"],
+                "security": [{ "bearerAuth": []}],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do usuário",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                               "$ref": "#/components/schemas/editUser"
+                            },
+                            "examples": {
+                                "users": {
+                                    "value": {
+                                        "lastName": "joaoo",
+                                        "firstName": "Luz Silva"
+                                     }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Error updating user"
+                    },
+                    "405": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "item": {
+                                        "$ref": "#/components/schemas/user"
+                                    }
+                                }
+                            }
+                        
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "login": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "E-mail do usuário"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Senha do usuário"
+                    }
+                }
+            },
+            "user": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "E-mail do usuário"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "description": "Data de cadastro"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Id do usuário"
+                    },
+                    "birthDate": {
+                        "type": "string",
+                        "description": "Data de nascimento do usuário"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "description": "Nome do usuário"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "description": "Sobrenome do usuário"
+                    }
+                }
+            },
+            "createdUser": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "E-mail do usuário"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Senha do usuário"
+                    },
+                    "birthDate": {
+                        "type": "string",
+                        "description": "Data de nascimento do usuário"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "description": "Nome do usuário"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "description": "Sobrenome do usuário"
+                    }
+                }
+            },
+            "editUser": {
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "type": "string",
+                        "description": "Nome do usuário"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "description": "Sobrenome do usuário"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

@@ -21,10 +21,15 @@ const userSchema = new Schema({
       minLength: 8,
       match: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{4,}$/
     },
-    lastName: String,
+    lastName: {
+      type: String,
+      required: true,
+      minLength: 3
+    },
     firstName: {
       type: String,
-      required: true
+      required: true,
+      minLength: 3,
     },
     createdAt: { type: Date, default: Date.now },
     birthDate: Date,

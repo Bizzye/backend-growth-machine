@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
-import { configs } from '../enums/config.enum';
 
 const connectDB = async () => {
     try {
-        const c = await mongoose.connect(configs.link);
+        const c = await mongoose.connect(process.env.LINK);
         
         console.log(`MongoDB connected: ${c.connection.host}`);
     } catch (error: any) {
