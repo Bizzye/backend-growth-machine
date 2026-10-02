@@ -12,6 +12,9 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
+// Supports the default listing order (newest first).
+userSchema.index({ createdAt: -1 });
+
 export type UserDocument = InferSchemaType<typeof userSchema> & { _id: { toString(): string } };
 
 export const UserModel = model("User", userSchema);
