@@ -1,9 +1,9 @@
 <div align="center">
 
-# Growth Machine — Users API
+# Growth Machine — API de Usuários
 
-REST API for user sign up, JWT authentication and users listing.<br/>
-Originally built as a technical challenge for **Growth Machine** (2024) and refactored in 2026 as a portfolio project.
+API REST para cadastro de usuários, autenticação JWT e listagem de usuários.<br/>
+Criada originalmente como desafio técnico para a **Growth Machine** (2024) e refatorada em 2026 como projeto de portfólio.
 
 [![CI](https://github.com/Bizzye/backend-growth-machine/actions/workflows/ci.yml/badge.svg)](https://github.com/Bizzye/backend-growth-machine/actions/workflows/ci.yml)
 ![Node](https://img.shields.io/badge/node-24-339933?logo=node.js&logoColor=white)
@@ -11,31 +11,33 @@ Originally built as a technical challenge for **Growth Machine** (2024) and refa
 ![MongoDB](https://img.shields.io/badge/mongodb-8-47A248?logo=mongodb&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-6-3178C6?logo=typescript&logoColor=white)
 
-[Frontend repository](https://github.com/Bizzye/frontend-growth-machine) · [API docs (local)](http://localhost:3333/docs) · [Code review](docs/CODE_REVIEW.md)
+[Repositório do frontend](https://github.com/Bizzye/frontend-growth-machine) · [Documentação da API (local)](http://localhost:3333/docs) · [Code review](docs/CODE_REVIEW.md)
 
 </div>
 
-## Highlights
+## Destaques
 
-- **Layered architecture** — routes → controllers → services → repositories, with DTO mappers and dependency injection.
-- **Security first** — bcrypt (cost 12), HS256-pinned JWT, rate-limited login, no user enumeration (same error _and_ same timing), helmet, CORS allow-list, body size limit, mass-assignment protection, secrets validated at startup and redacted from logs.
-- **Validation** with Zod on every input; consistent error contract `{ code, message, details? }`.
-- **Tested** — unit + HTTP integration tests (Supertest) against an in-memory MongoDB, ~99% line coverage.
-- **Production-ready** — ESM build, structured logs (pino), health check, graceful shutdown, non-root Docker image, CI/CD with GitHub Actions.
+- **Arquitetura em camadas** — routes → controllers → services → repositories, com mappers de DTO e injeção de dependência.
+- **Segurança em primeiro lugar** — bcrypt (custo 12), JWT fixado em HS256, rate limit no login, sem _user enumeration_ (mesmo erro _e_ mesmo tempo de resposta), helmet, CORS com allow-list, limite de tamanho do body, proteção contra mass assignment, segredos validados na inicialização e removidos dos logs.
+- **Validação** com Zod em todas as entradas; contrato de erro consistente `{ code, message, details? }`.
+- **Testado** — testes unitários e de integração HTTP (Supertest) contra um MongoDB em memória, ~99% de cobertura de linhas.
+- **Pronto para produção** — build ESM, logs estruturados (pino), health check, graceful shutdown, imagem Docker sem root e CI/CD com GitHub Actions.
+
+> O código e as mensagens da API estão em inglês para manter a codebase padronizada.
 
 ## Endpoints
 
-| Method  | Path              | Auth | Description                                |
-| ------- | ----------------- | ---- | ------------------------------------------ |
-| `GET`   | `/api/health`     | —    | API and database status                    |
-| `POST`  | `/api/auth/login` | —    | Sign in → `{ token, user }` (rate limited) |
-| `POST`  | `/api/users`      | —    | Sign up                                    |
-| `GET`   | `/api/users`      | JWT  | List users (newest first)                  |
-| `GET`   | `/api/users/me`   | JWT  | Authenticated user                         |
-| `PATCH` | `/api/users/:id`  | JWT  | Update your own profile (`403` for others) |
-| `GET`   | `/docs`           | —    | Interactive OpenAPI 3.1 documentation      |
+| Método  | Rota              | Auth | Descrição                                     |
+| ------- | ----------------- | ---- | --------------------------------------------- |
+| `GET`   | `/api/health`     | —    | Status da API e do banco                      |
+| `POST`  | `/api/auth/login` | —    | Login → `{ token, user }` (com rate limit)    |
+| `POST`  | `/api/users`      | —    | Cadastro                                      |
+| `GET`   | `/api/users`      | JWT  | Lista usuários (mais recentes primeiro)       |
+| `GET`   | `/api/users/me`   | JWT  | Usuário autenticado                           |
+| `PATCH` | `/api/users/:id`  | JWT  | Atualiza o próprio perfil (`403` para outros) |
+| `GET`   | `/docs`           | —    | Documentação interativa OpenAPI 3.1           |
 
-Errors always follow the same shape:
+Os erros sempre seguem o mesmo formato:
 
 ```json
 {
@@ -45,84 +47,85 @@ Errors always follow the same shape:
 }
 ```
 
-Codes: `VALIDATION_ERROR`, `INVALID_CREDENTIALS`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `USER_NOT_FOUND`, `USER_ALREADY_EXISTS`, `PAYLOAD_TOO_LARGE`, `TOO_MANY_REQUESTS`, `INTERNAL_ERROR`.
+Códigos: `VALIDATION_ERROR`, `INVALID_CREDENTIALS`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `USER_NOT_FOUND`, `USER_ALREADY_EXISTS`, `PAYLOAD_TOO_LARGE`, `TOO_MANY_REQUESTS`, `INTERNAL_ERROR`.
 
-## Getting started
+## Como rodar
 
-### With Docker (API + MongoDB)
+### Com Docker (API + MongoDB)
 
 ```bash
 docker compose up --build -d
-docker compose exec api node dist/scripts/seed.js   # optional: demo users (password Str0ng!Pass)
+docker compose exec api node dist/scripts/seed.js   # opcional: usuários de demonstração (senha Str0ng!Pass)
 ```
 
-API at <http://localhost:3333/api> · docs at <http://localhost:3333/docs>.
+API em <http://localhost:3333/api> · documentação em <http://localhost:3333/docs>.
 
-> To run the **whole stack** (MongoDB + API + Next.js frontend), use the `docker-compose.yml` of the [frontend repository](https://github.com/Bizzye/frontend-growth-machine).
+> Para rodar a **stack completa** (MongoDB + API + frontend Next.js), use o `docker-compose.yml` do [repositório do frontend](https://github.com/Bizzye/frontend-growth-machine).
 
-### Locally
+### Localmente
 
-Requirements: Node.js 24 (see `.nvmrc`) and a MongoDB instance (`docker compose up -d mongo` works).
+Requisitos: Node.js 24 (veja `.nvmrc`) e uma instância do MongoDB (`docker compose up -d mongo` resolve).
 
 ```bash
-cp .env.example .env   # then set JWT_SECRET
+cp .env.example .env   # depois defina o JWT_SECRET
 npm install
-npm run seed           # optional
+npm run seed           # opcional
 npm run dev
 ```
 
-### Environment variables
+### Variáveis de ambiente
 
-| Variable         | Required | Default                 | Description                             |
-| ---------------- | -------- | ----------------------- | --------------------------------------- |
-| `MONGODB_URI`    | ✅       | —                       | MongoDB connection string               |
-| `JWT_SECRET`     | ✅       | —                       | HS256 secret, at least 32 characters    |
-| `JWT_EXPIRES_IN` |          | `1d`                    | Token lifetime (`15m`, `12h`, `1d`…)    |
-| `CORS_ORIGIN`    |          | `http://localhost:3000` | Comma-separated list of allowed origins |
-| `PORT`           |          | `3333`                  | HTTP port                               |
-| `LOG_LEVEL`      |          | `info`                  | pino log level                          |
+| Variável         | Obrigatória | Padrão                  | Descrição                                                           |
+| ---------------- | ----------- | ----------------------- | ------------------------------------------------------------------- |
+| `MONGODB_URI`    | ✅          | —                       | String de conexão do MongoDB                                        |
+| `JWT_SECRET`     | ✅          | —                       | Segredo HS256, com pelo menos 32 caracteres                         |
+| `JWT_EXPIRES_IN` |             | `1d`                    | Validade do token (`15m`, `12h`, `1d`…)                             |
+| `CORS_ORIGIN`    |             | `http://localhost:3000` | Origens permitidas, separadas por vírgula                           |
+| `TRUST_PROXY`    |             | `0`                     | Quantidade de proxies reversos na frente da API (0 = acesso direto) |
+| `PORT`           |             | `3333`                  | Porta HTTP                                                          |
+| `LOG_LEVEL`      |             | `info`                  | Nível de log do pino                                                |
 
 ## Scripts
 
-| Script                  | Description                               |
-| ----------------------- | ----------------------------------------- |
-| `npm run dev`           | Watch mode with `tsx`                     |
-| `npm run build`         | Compile to `dist/`                        |
-| `npm start`             | Run the compiled server                   |
-| `npm run seed`          | Insert demo users (idempotent)            |
-| `npm test`              | Unit + integration tests                  |
-| `npm run test:coverage` | Tests with coverage report and thresholds |
-| `npm run lint`          | ESLint                                    |
-| `npm run format`        | Prettier                                  |
-| `npm run typecheck`     | TypeScript                                |
-| `npm run validate`      | Everything CI runs before tests           |
+| Script                  | Descrição                                      |
+| ----------------------- | ---------------------------------------------- |
+| `npm run dev`           | Modo watch com `tsx`                           |
+| `npm run build`         | Compila para `dist/`                           |
+| `npm start`             | Executa o servidor compilado                   |
+| `npm run seed`          | Insere usuários de demonstração (idempotente)  |
+| `npm test`              | Testes unitários + integração                  |
+| `npm run test:coverage` | Testes com relatório de cobertura e thresholds |
+| `npm run lint`          | ESLint                                         |
+| `npm run format`        | Prettier                                       |
+| `npm run typecheck`     | TypeScript                                     |
+| `npm run validate`      | Tudo o que o CI roda antes dos testes          |
 
-## Project structure
+## Estrutura do projeto
 
 ```
 src/
-├── app.ts                 # Express application factory (no side effects)
-├── server.ts              # Composition root: DB connection, listen, graceful shutdown
-├── config/                # Env validation (Zod) and database connection
-├── docs/openapi.ts        # OpenAPI 3.1 document served at /docs
+├── app.ts                 # Factory da aplicação Express (sem efeitos colaterais)
+├── server.ts              # Composition root: conexão com o banco, listen, graceful shutdown
+├── config/                # Validação de env (Zod) e conexão com o banco
+├── docs/openapi.ts        # Documento OpenAPI 3.1 servido em /docs
 ├── middlewares/           # authenticate, validate, rate limit, error handler
 ├── modules/
 │   ├── auth/              # routes · controller · service · schemas
 │   └── users/             # routes · controller · service · repository · model · mapper · schemas
-├── scripts/seed.ts        # Demo data
-└── shared/                # HttpError, logger, password hashing, JWT
+├── scripts/seed.ts        # Dados de demonstração
+└── shared/                # HttpError, logger, hash de senha, JWT
 tests/
-├── unit/                  # env, token, error handler, service with fake repository
-├── integration/           # Supertest against createApp() + in-memory MongoDB
+├── unit/                  # env, token, senha, error handler, service com repository fake
+├── integration/           # Supertest contra createApp() + MongoDB em memória
 └── helpers/               # factories
 ```
 
 ## CI/CD
 
-- **CI** (`.github/workflows/ci.yml`) — on every push/PR: format, lint, typecheck, build, tests with coverage and a Docker build.
-- **CD** (`.github/workflows/release.yml`) — after CI passes on `main` (and on `v*.*.*` tags) the image is published to `ghcr.io/bizzye/backend-growth-machine`.
-- **Dependabot** keeps npm packages and GitHub Actions up to date.
+- **CI** (`.github/workflows/ci.yml`) — a cada push/PR: format, lint, typecheck, build, testes com cobertura e build da imagem Docker.
+- **CD** (`.github/workflows/release.yml`) — depois que o CI passa na `main` (e em tags `v*.*.*`) a imagem é publicada em `ghcr.io/bizzye/backend-growth-machine`.
+- **Dependabot** mantém os pacotes npm e as GitHub Actions atualizados.
 
-## License
+## Licença
 
 MIT

@@ -54,3 +54,13 @@ Severity: 🔴 bug / security · 🟠 maintainability / architecture · 🟡 sty
 - **Vitest + Supertest + mongodb-memory-server**: unit tests and HTTP integration tests against a real (in-memory) MongoDB, with coverage thresholds.
 - **GitHub Actions**: CI (quality + build, tests with coverage, Docker build) and CD (image published to GHCR); Dependabot.
 - `docker-compose.yml` (API + MongoDB) and `npm run seed` for demo data.
+
+## Follow-up review (PR #1)
+
+| #   | Severity | Finding                                                                                                                                                     | Fix                                                                            |
+| --- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| R1  | 🔴       | `trust proxy` hard-coded to `1`: with no reverse proxy in front, clients could rotate `X-Forwarded-For` and bypass the login rate limit.                    | `TRUST_PROXY` env var (default `0`), covered by a test that spoofs the header. |
+| R2  | 🟡       | The timing-safety dummy hash was computed with `bcrypt.hashSync` (cost 12) at import time, blocking the event loop for ~300ms on every start and test file. | Hard-coded cost-12 hash; a test asserts its cost matches `SALT_ROUNDS`.        |
+| R3  | 🟡       | Users listing sorted by `createdAt` without an index.                                                                                                       | `createdAt: -1` index.                                                         |
+
+Known trade-offs kept on purpose: `GET /users` is not paginated (small dataset, the UI shows everyone) and `bcryptjs` is pure JS (fine at this scale behind the rate limit; native `bcrypt`/argon2 would move hashing off the main thread).
