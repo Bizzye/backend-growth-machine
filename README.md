@@ -6,7 +6,7 @@ API REST para cadastro de usuários, autenticação JWT e listagem de usuários.
 Criada originalmente como desafio técnico para a **Growth Machine** (2024) e refatorada em 2026 como projeto de portfólio.
 
 [![CI](https://github.com/Bizzye/backend-growth-machine/actions/workflows/ci.yml/badge.svg)](https://github.com/Bizzye/backend-growth-machine/actions/workflows/ci.yml)
-![Node](https://img.shields.io/badge/node-24-339933?logo=node.js&logoColor=white)
+![Node](https://img.shields.io/badge/node-24-339933?logo=nodedotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/express-5-000000?logo=express&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/mongodb-8-47A248?logo=mongodb&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-6-3178C6?logo=typescript&logoColor=white)
