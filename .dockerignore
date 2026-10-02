@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.git
+.github
+.husky
+tests
+*.md
+.env
+.env*.local
+Dockerfile
+docker-compose.yml
