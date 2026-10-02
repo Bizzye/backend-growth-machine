@@ -23,7 +23,7 @@ export function createApp({ loginAttemptsLimit = 10 }: AppOptions = {}): Express
   const app = express();
 
   app.disable("x-powered-by");
-  app.set("trust proxy", 1);
+  app.set("trust proxy", env.TRUST_PROXY);
 
   // Swagger UI needs inline scripts/styles, so it is mounted before the strict CSP from helmet.
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));

@@ -75,4 +75,16 @@ describe("POST /api/auth/login", () => {
 
     expect(response.body.code).toBe("TOO_MANY_REQUESTS");
   });
+
+  it("does not let clients bypass the rate limit by spoofing X-Forwarded-For", async () => {
+    const limitedApp = createApp({ loginAttemptsLimit: 1 });
+    const attempt = (ip: string) =>
+      request(limitedApp)
+        .post("/api/auth/login")
+        .set("X-Forwarded-For", ip)
+        .send({ email: "a@b.com", password: "x" });
+
+    await attempt("1.1.1.1").expect(401);
+    await attempt("2.2.2.2").expect(429);
+  });
 });

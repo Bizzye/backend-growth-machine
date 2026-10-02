@@ -13,6 +13,7 @@ describe("loadEnv", () => {
       JWT_EXPIRES_IN: "1d",
       CORS_ORIGIN: ["http://localhost:3000"],
       LOG_LEVEL: "info",
+      TRUST_PROXY: 0,
     });
   });
 

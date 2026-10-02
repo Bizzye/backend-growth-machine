@@ -13,6 +13,11 @@ const envSchema = z.object({
     .string()
     .default("http://localhost:3000")
     .transform((value) => value.split(",").map((origin) => origin.trim())),
+  /**
+   * Number of reverse proxies in front of the API (Express "trust proxy"). Keep 0 when the API is
+   * exposed directly, otherwise clients could spoof X-Forwarded-For and bypass the login rate limit.
+   */
+  TRUST_PROXY: z.coerce.number().int().min(0).default(0),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
 });
 
